@@ -3,7 +3,6 @@ import pandas as pd
 from vespa.application import Vespa
 from vespa.io import VespaResponse, VespaQueryResponse
 
-# Function to display hits as a DataFrame
 def display_hits_as_df(response: VespaQueryResponse, fields) -> pd.DataFrame:
     records = []
     for hit in response.hits:
@@ -13,7 +12,6 @@ def display_hits_as_df(response: VespaQueryResponse, fields) -> pd.DataFrame:
         records.append(record)
     return pd.DataFrame(records)
 
-# Keyword search function using the BM25 ranking profile
 def keyword_search(app, search_query):
     query = {
         "yql": "select * from sources * where userQuery() limit 5",
@@ -22,8 +20,6 @@ def keyword_search(app, search_query):
     }
     response = app.query(query)
     return display_hits_as_df(response, ["doc_id", "title", "text", "views", "likes", "comment_count"])
-
-# Semantic search function using embedding
 def semantic_search(app, query):
     query = {
         "yql": "select * from sources * where ({targetHits:100}nearestNeighbor(embedding,e)) limit 5",
@@ -34,7 +30,6 @@ def semantic_search(app, query):
     response = app.query(query)
     return display_hits_as_df(response, ["doc_id", "title", "text", "views", "likes", "comment_count"])
 
-# Retrieve embedding for a specific doc_id
 def get_embedding(doc_id):
     query = {
         "yql" : f"select doc_id, title, text, embedding from doc where doc_id contains \'{doc_id}\'",
